@@ -41,6 +41,7 @@
         watch: {
             origin_text: function (new_v, old_v) {
                 let origin_match = new_v.match(/(?:(?:uid|token): [\S]+|time=[\S]+)/g)
+                if (!origin_match) return
                 for (let phase of origin_match){
                     let uid = phase.replace("uid: ","")
                     let token = phase.replace("token: ","")
@@ -56,11 +57,8 @@
                     if (data){
                         this.result.data = phase
                     }
-
                 }
-
             }
-
         }
     })
     new ClipboardJS('#btn');
