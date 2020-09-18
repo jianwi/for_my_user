@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>从正则中取分组</title>
+</head>
+<body>
+<div id="app">
+    <div>
+        <p>请输入原文本</p>
+        <textarea class="form-control" v-model="origin_text" cols="60" rows="10"></textarea>
+        <p>最终结果</p>
+        <textarea rows="10" cols="60" id="result">
+            {{ result }}
+        </textarea>
+        <p>
+            <button id="btn" data-clipboard-action="copy" data-clipboard-target="#result">
+                复制结果
+            </button>
+        </p>
+    </div>
+</div>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+<script>
+    let vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                origin_text: "",
+                result: {
+                    uid:"",
+                    token:"",
+                    data:""
+                }
+            }
+        },
+        watch: {
+            origin_text: function (new_v, old_v) {
+                let origin_match = new_v.match(/(?:(?:uid|token): [\S]+|time=[\S]+)/g)
+                for (let phase of origin_match){
+                    let uid = phase.replace("uid: ","")
+                    let token = phase.replace("token: ","")
+                    let data = phase.substr(0,5) === "time="
+                    if (uid !== phase){
+                        this.result.uid = uid
+                        continue
+                    }
+                    if (token !== phase){
+                        this.result.token = token
+                        continue
+                    }
+                    if (data){
+                        this.result.data = phase
+                    }
+
+                }
+
+            }
+
+        }
+    })
+    new ClipboardJS('#btn');
+</script>
+</body>
+</html>
